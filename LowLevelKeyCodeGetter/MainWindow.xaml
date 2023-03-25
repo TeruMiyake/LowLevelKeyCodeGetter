@@ -52,9 +52,16 @@ sent or received, and those values are bound in the DataTemplate.-->
 
         <!-- 操作ボタン -->
         <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Button x:Name="setHookButton" Click="SetHook" Width="120" Height="60" Content="Set Hook" Margin="5, 5, 5, 5"/>
-            <Button x:Name="unHookButton" Click="Unhook" Width="120" Height="60" IsEnabled="False" Content="Unhook" Margin="5, 5, 5, 5"/>
-            <Button x:Name="clearKeyLogButton" Click="ClearKeyLog"  Width="120" Height="60"  Content="Clear Log" Margin="5, 15, 5, 5"/>
+            <Button x:Name="setHookButton" Click="SetHook" Width="120" Height="50" Content="Set Hook" Margin="5, 5, 5, 5"/>
+            <Button x:Name="unHookButton" Click="Unhook" Width="120" Height="50" IsEnabled="False" Content="Unhook" Margin="5, 5, 5, 5"/>
+            <Button x:Name="clearKeyLogButton" Click="ClearKeyLog"  Width="120" Height="45"  Content="Clear Log" Margin="5, 15, 5, 5"/>
+            <Button x:Name="copyKeyLogButton" Click="CopyKeyLog"  Width="120" Height="45"  Content="Copy Log" Margin="5, 5, 5, 5">
+                <Button.Flyout>
+                    <Flyout>
+                        <TextBlock Text="The log (JSON) was copied to clipboard." />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
         </StackPanel>
 
         <!-- システムログ -->

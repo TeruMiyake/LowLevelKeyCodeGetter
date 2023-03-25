@@ -34,11 +34,11 @@ namespace LowLevelKeyCodeGetter.Utils
 
     public class KeyEvent
     {
-        public uint vkCode;
-        public uint scanCode;
-        public KBDLLHOOKSTRUCTFlags flags;
-        public uint time;
-        public uint dwExtraInfo;
+        public uint vkCode { get; set; }
+        public uint scanCode { get; set; }
+        public KBDLLHOOKSTRUCTFlags flags { get; set; }
+        public uint time { get; set; }
+        public uint dwExtraInfo { get; set; }
 
         public KeyEvent(KBDLLHOOKSTRUCT kbd)
         {

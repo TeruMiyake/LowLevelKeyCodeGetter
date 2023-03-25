@@ -13,8 +13,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Text.Json;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+
+// クリップボード操作
+using Windows.ApplicationModel.DataTransfer;
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
@@ -108,11 +112,20 @@ namespace LowLevelKeyCodeGetter
             keyUpLast1TextBox.Text = "";
         }
 
-        private void KeyDownHandler(KBDLLHOOKSTRUCT kbd)
+        private void CopyKeyLog(object sender, RoutedEventArgs e)
         {
-            // なぜか動かない
-            //string json = System.Text.Json.JsonSerializer.Serialize(kbd);
-            //keycodeTextBox.Text = json;
+            var options = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            string json = JsonSerializer.Serialize(keyEvents, options);
+
+            DataPackage data = new DataPackage();
+            data.SetText(json);
+            Clipboard.SetContent(data);
+        }
+            private void KeyDownHandler(KBDLLHOOKSTRUCT kbd)
+        {
             AddKeyDownMessageToEnd(keyEvents.Count, kbd.vkCode);
 
             ActivateKeyDownImage();
