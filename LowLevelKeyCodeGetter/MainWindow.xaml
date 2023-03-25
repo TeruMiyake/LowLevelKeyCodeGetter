@@ -1,0 +1,164 @@
+﻿<!-- Copyright (c) Microsoft Corporation and Contributors. -->
+<!-- Licensed under the MIT License. -->
+
+<Window
+    x:Class="LowLevelKeyCodeGetter.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:LowLevelKeyCodeGetter"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    xmlns:sys="using:System">
+
+    <Grid HorizontalAlignment="Center" Margin="5, 5, 5, 5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="3*" />
+            <ColumnDefinition Width="6*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="5*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="3*" />
+        </Grid.RowDefinitions>
+
+        <!-- InvertedListView -->
+        <Grid.Resources>
+            <!-- Data template used: -->
+            <!-- The data template is bound to a custom DataType called Message. -->
+            <!-- Each Message object has a color and alignment assigned to it based on whether it was
+sent or received, and those values are bound in the DataTemplate.-->
+            <DataTemplate x:Key="MessageViewTemplate" x:DataType="local:Message">
+                <Grid Height="Auto" Margin="4" HorizontalAlignment="{x:Bind MsgAlignment}">
+                    <StackPanel
+                        MinHeight="70"
+                        Width="200"
+                        Padding="10, 0, 0, 10"
+                        CornerRadius="{StaticResource ControlCornerRadius}">
+                        <StackPanel.Background>
+                            <SolidColorBrush Color="{x:Bind MsgBgColor}" />
+                        </StackPanel.Background>
+                        <TextBlock Text="{x:Bind MsgText}" Padding="0, 10, 0, 0" FontSize="20" Foreground="{ThemeResource SystemControlForegroundAltHighBrush}"/>
+                        <TextBlock Text="{x:Bind MsgDateTimeString}" Padding="0, 0, 0, 10" FontSize="15" Foreground="{ThemeResource SystemControlForegroundAltMediumHighBrush}"/>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+        </Grid.Resources>
+
+        <!-- 操作ボタン -->
+        <StackPanel Grid.Row="0" Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Button x:Name="setHookButton" Click="SetHook" Width="120" Height="60" Content="Set Hook" Margin="5, 5, 5, 5"/>
+            <Button x:Name="unHookButton" Click="Unhook" Width="120" Height="60" IsEnabled="False" Content="Unhook" Margin="5, 5, 5, 5"/>
+            <Button x:Name="clearKeyLogButton" Click="ClearKeyLog"  Width="120" Height="60"  Content="Clear Log" Margin="5, 15, 5, 5"/>
+        </StackPanel>
+
+        <!-- システムログ -->
+        <StackPanel  Grid.Row="0"
+                     Grid.Column="1" Grid.ColumnSpan="2"
+                     Margin="5, 0, 0, 0"
+                     VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="システムログ"/>
+            <TextBox x:Name="systemLogTextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="150" Width="200" Margin="0, 5, 5, 5"
+                     PlaceholderText="System Log here"/>
+        </StackPanel>
+        <!-- 選択されたキーの詳細ログ -->
+        <StackPanel  Grid.Row="0"
+                     Grid.Column="3"
+                     Margin="20, 0, 0, 0"
+                     VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock Text="選択されたキーイベントの詳細"/>
+            <TextBox x:Name="keyLogTextBox"
+                     IsReadOnly="True" AcceptsReturn="True"
+                     Height="150" Width="200" Margin="5, 5, 5, 5"
+                     PlaceholderText="Key Log here"/>
+        </StackPanel>
+
+        <!-- KeyDown/Up 画像 -->
+        <StackPanel Grid.Row="1"
+                    Grid.Column="0" Grid.ColumnSpan="2"
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image x:Name="keyDownImage" Width="100" Height="100" Source="ms-appx:///Assets/KeyDown.png" Opacity="0.3"/>
+        </StackPanel>
+        <StackPanel Grid.Row="1" 
+                    Grid.Column="2" Grid.ColumnSpan="2" 
+                    VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Image x:Name="keyUpImage" Width="100" Height="100" Source="ms-appx:///Assets/KeyUp.png"  Opacity="0.3"/>
+        </StackPanel>
+
+        <!-- 直近 3 KeyDown 詳細ログ-->
+        <StackPanel Grid.Row="2" Grid.RowSpan="3"
+                    Grid.Column="0" Grid.ColumnSpan="2"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="直近 3 KeyDown イベント"/>
+            <TextBlock Text="Last 3"/>
+            <TextBox x:Name="keyDownLast3TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+            <TextBlock Text="Last 2"/>
+            <TextBox x:Name="keyDownLast2TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+            <TextBlock Text="Last 1"/>
+            <TextBox x:Name="keyDownLast1TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+        </StackPanel>
+        <!-- 直近 3 KeyUp 詳細ログ-->
+        <StackPanel Grid.Row="2" Grid.RowSpan="3"
+                    Grid.Column="2" Grid.ColumnSpan="2"
+                    HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="直近 3 KeyUp イベント"/>
+            <TextBlock Text="Last 3"/>
+            <TextBox x:Name="keyUpLast3TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+            <TextBlock Text="Last 2"/>
+            <TextBox x:Name="keyUpLast2TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+            <TextBlock Text="Last 1"/>
+            <TextBox x:Name="keyUpLast1TextBox" IsReadOnly="True" AcceptsReturn="True"
+                     Height="120" Width="250" Margin="5, 5, 5, 5"
+                     PlaceholderText="Keycode here"/>
+        </StackPanel>
+
+        <!-- KeyDown/Up タイムラインの InvertedListView -->
+        <ListView Grid.Row="0" Grid.Column="4" Grid.RowSpan="5"
+                  x:Name="InvertedListView"
+                  ItemTemplate="{StaticResource MessageViewTemplate}"
+                  BorderThickness="1"
+                  BorderBrush="{ThemeResource SystemControlForegroundBaseMediumLowBrush}"
+                  VerticalAlignment="Stretch"
+                  Width="440" Margin="5, 5, 5, 5"
+                  SelectionMode="Single"
+                  IsItemClickEnabled="False"
+                  SelectionChanged="MessageClickHandler">
+
+            <!-- The ItemsStackPanel must be edited to update the following two properties -->
+            <!-- These properties allow the list to grow from the bottom -->
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <ItemsStackPanel ItemsUpdatingScrollMode="KeepLastItemInView"
+                              VerticalAlignment="Bottom"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <!-- This setter property is created so ListViewItems correctly align to the left or right. -->
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <!--<Style.Setters>-->
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <!--<Setter Property="Click" Value="MessageClickHandler"/>-->
+                    <!--</Style.Setters>-->
+                </Style>
+            </ListView.ItemContainerStyle>
+        </ListView>
+    </Grid>
+
+</Window>

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "LowLevelKeyCodeGetter (Package)": {
+      "commandName": "MsixPackage"
+    },
+    "LowLevelKeyCodeGetter (Unpackaged)": {
+      "commandName": "Project"
+    }
+  }
+}
