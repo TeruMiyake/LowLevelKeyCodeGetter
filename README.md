@@ -3,6 +3,49 @@
 ## 概要
 WH_KEYBOARD_LLを使って各種KEYDOWN/KEYUPイベントをグローバルに（=thread-specificでなく）フックし、リアルタイムにログを表示します。
 
+## 出力するログファイルの形式
+- JSON形式です。
+- Windowsメッセージフックから取得した[KBDLLHOOKSTRUCT](https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-kbdllhookstruct)をそのままログ化しています。
+### 構造
+```json
+[
+  {
+    "vkCode": int 仮想コード,
+    "scanCode": int スキャンコード,
+    "flags": byte 各種フラグ,
+    "time": long タイムスタンプ,
+    "dwExtraInfo": 追加情報
+  },
+]
+```
+### 簡単な説明
+#### 仮想コード vkCode
+- ソフトウェアによって解釈された、意味のあるキー種別を数字で表します。
+    - ex. A key, Shift key, 9 key..
+- [仮想キー コード | Microsoft Learn](https://learn.microsoft.com/ja-jp/windows/win32/inputdev/virtual-key-codes)
+#### スキャンコード scanCode
+- ハードウェアとしての各キーに設定されたコード。
+  - つまり、配列選択に関係無い物理キーを表す。
+  - ただし「ソフトウェア的に改ざんできない」というわけではないので、必ずしも物理キーの情報を正確に取れるとは限らないことに注意。
+- [スキャンコード | Microsoft Learn](https://learn.microsoft.com/ja-jp/windows/win32/inputdev/about-keyboard-input#scan-codes)
+#### 各種フラグ flags
+- 8bit フラグ
+- 以下、ビット列76543210として、各bitの意味を説明
+    - 0: extend key であれば 1
+    - 1: より低い統合レベルにあるプロセスによって inject されたキーであれば 1
+    - 2: 利用されていない（システム予約）
+    - 3: 利用されていない（システム予約）
+    - 4: 何らかのプロセスによって inject されたキーであれば 1
+    - 5: コンテクストコード。そのキーが押された時、ALT キーが押されていたのであれば 1
+    - 6: 利用されていない（システム予約）
+    - 7: 押下(KeyDown)であれば 0, 解放（KeyUp）であれば 1
+#### タイムスタンプ time
+- システム（Windows）起動時からキーイベントまでに経過した時間。GetMessageTime関数が返す値と同じ。
+- [GetMessageTime function | Microsoft Learn](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getmessagetime)
+#### 追加情報 dwExtraInfo
+- メッセージに関する追加情報
+  - らしいが、正直何に使われるのか全然知らない
+
 ## Windows の入力の流れ
 
 * [Keyboard Input](https://learn.microsoft.com/en-us/windows/win32/inputdev/keyboard-input)
