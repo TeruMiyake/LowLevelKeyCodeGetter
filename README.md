@@ -7,14 +7,14 @@ WH_KEYBOARD_LLを使って各種KEYDOWN/KEYUPイベントをグローバルに�
 - JSON形式です。
 - Windowsメッセージフックから取得した[KBDLLHOOKSTRUCT](https://learn.microsoft.com/en-us/windows/win32/api/winuser/ns-winuser-kbdllhookstruct)をそのままログ化しています。
 ### 構造
-```json
+```
 [
   {
     "vkCode": int 仮想コード,
     "scanCode": int スキャンコード,
     "flags": byte 各種フラグ,
     "time": long タイムスタンプ,
-    "dwExtraInfo": 追加情報
+    "dwExtraInfo": ? 追加情報
   },
 ]
 ```
