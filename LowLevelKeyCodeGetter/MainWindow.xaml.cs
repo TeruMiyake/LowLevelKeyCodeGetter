@@ -124,29 +124,49 @@ namespace LowLevelKeyCodeGetter
             data.SetText(json);
             Clipboard.SetContent(data);
         }
-            private void KeyDownHandler(KBDLLHOOKSTRUCT kbd)
+        private async void KeyDownHandler(KBDLLHOOKSTRUCT kbd)
         {
-            AddKeyDownMessageToEnd(keyEvents.Count, kbd.vkCode);
+            await Task.Run(() =>
+            {
+                // UI 要素を別スレッドから呼び出すための処理
+                this.DispatcherQueue.TryEnqueue(
+                    Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
+                    () =>
+                    {
+                        AddKeyDownMessageToEnd(keyEvents.Count, kbd.vkCode);
 
-            ActivateKeyDownImage();
-            DeactivateKeyDownImageAsync();
+                        ActivateKeyDownImage();
+                        DeactivateKeyDownImageAsync();
 
-            string log = kbdToString(kbd);
-            AddKeyDownLog(log);
 
-            keyEvents.Add(new KeyEvent(kbd));
+                        string log = kbdToString(kbd);
+                        AddKeyDownLog(log);
+
+                        keyEvents.Add(new KeyEvent(kbd));
+                    });
+            });
         }
 
-        private void KeyUpHandler(KBDLLHOOKSTRUCT kbd)
+        private async void KeyUpHandler(KBDLLHOOKSTRUCT kbd)
         {
-            AddKeyUpMessageToEnd(keyEvents.Count, kbd.vkCode);
+            await Task.Run(() =>
+            {
+                // UI 要素を別スレッドから呼び出すための処理
+                this.DispatcherQueue.TryEnqueue(
+                    Microsoft.UI.Dispatching.DispatcherQueuePriority.Normal,
+                    () =>
+                    {
+                        AddKeyUpMessageToEnd(keyEvents.Count, kbd.vkCode);
 
-            ActivateKeyUpImage();
-            DeactivateKeyUpImageAsync();
+                        ActivateKeyUpImage();
+                        DeactivateKeyUpImageAsync();
+                        string log = kbdToString(kbd);
+                        AddKeyUpLog(log);
+                        keyEvents.Add(new KeyEvent(kbd));
 
-            string log = kbdToString(kbd);
-            AddKeyUpLog(log);
-            keyEvents.Add(new KeyEvent(kbd));
+                    });
+
+            });
         }
         private string kbdToString(KBDLLHOOKSTRUCT kbd)
         {
@@ -168,7 +188,7 @@ namespace LowLevelKeyCodeGetter
         {
             InvertedListView.Items.Add(
                 new Message(num, vkCode, "Up", DateTime.Now.ToString("yy/MM/dd HH:mm:ss.fff"), HorizontalAlignment.Right, "Blue")
-                );
+            );
         }
         private void MessageClickHandler(object sender, RoutedEventArgs e)
         {
